@@ -1,11 +1,6 @@
-from __future__ import print_function
-import argparse
-import os
 import random
 import torch
 import torch.nn as nn
-import torch.nn.parallel
-import torch.backends.cudnn as cudnn
 from torchvision.utils import make_grid
 import torch.optim as optim
 import numpy as np
@@ -13,7 +8,6 @@ import torch.utils.data
 import torchvision
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
-import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 
@@ -30,6 +24,7 @@ trainset = torchvision.datasets.MNIST(root='./data', train=True, download=True,
 testset = torchvision.datasets.MNIST(root='./data', train=False, download=True,
                                      transform=tf)
 
+# concatenating to get bigger dataset 
 dataset = torch.utils.data.ConcatDataset([trainset, testset])
 
 trainloader = torch.utils.data.DataLoader(dataset, batch_size=100,
@@ -38,13 +33,13 @@ trainloader = torch.utils.data.DataLoader(dataset, batch_size=100,
 
 def showImage(images, epoch=-99, idx=-99):
     images = images.cpu().numpy()
-    images = images / 2 + 0.5
+    images = images / 2 + 0.5   #unnormalize
     plt.imshow(np.transpose(images, axes=(1, 2, 0)))
     plt.axis('off')
     if epoch != -99:
         plt.savefig("e" + str(epoch) + "i" + str(idx) + ".png")
 
-
+#sample images from dataset
 dataiter = iter(trainloader)
 images, labels = dataiter.next()
 print(images.size())
@@ -164,11 +159,12 @@ print(len(paramsG))
 paramsD = list(disc.parameters())
 print(len(paramsD))
 
-optimG = optim.Adam(gen.parameters(), 0.0002, betas=(0.5, 0.999))
+optimG = optim.Adam(gen.parameters(), 0.0002, betas=(0.5, 0.999))   # values according to dcgan paper
 optimD = optim.Adam(disc.parameters(), 0.0002, betas=(0.5, 0.999))
 
-real_labels = 0.7 + 0.5 * torch.rand(10, device=device)
-fake_labels = 0.3 * torch.rand(10, device=device)
+# label smoothening
+real_labels = 0.7 + 0.5 * torch.rand(10, device=device)   # 0.7 - 1.2
+fake_labels = 0.3 * torch.rand(10, device=device)   # 0 - 0.3
 epochs = 10
 
 validity_loss = nn.BCELoss()
@@ -184,6 +180,7 @@ for epoch in range(1, epochs + 1):
         real_label = real_labels[idx % 10]
         fake_label = fake_labels[idx % 10]
 
+        # label flipping
         if idx % 7 == 0:
             real_label, fake_label = fake_label, real_label
 
@@ -265,6 +262,8 @@ for epoch in range(1, epochs + 1):
 
             showImage(make_grid(gen_images), epoch, idx)
 
+            
+# seeing images from generator
 noise = torch.randn(64, 100, device=device)
 labels = torch.randint(0, 10, (64,), dtype=torch.long, device=device, )
 fakes = gen(noise, labels).detach()
