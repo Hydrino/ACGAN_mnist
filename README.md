@@ -23,16 +23,16 @@ An Auxiliary Classifier GAN(ACGAN) in PyTorch to generate MNIST digits.
 
 ## Results
 - epoch 2 iteration 200/700
-![epoch2iter200](epoch2iter200.png)
+![images/epoch2iter200](images/epoch2iter200.png)
 
 - epoch 4 iteration 500/700
-![epoch2iter200](epoch4iter500.png)
+![images/epoch2iter200](images/epoch4iter500.png)
 
 - epoch 6 iteration 500/700
-![epoch2iter200](epoch6iter500.png)
+![images/epoch2iter200](images/epoch6iter500.png)
 
 - epoch 8 iteration 400/700
-![epoch2iter200](epoch8iter400.png)
+![images/epoch2iter200](images/epoch8iter400.png)
 
 - epoch 10 iteration 200/700
-![epoch2iter200](epoch10iter200.png)
+![images/epoch2iter200](images/epoch10iter200.png)
